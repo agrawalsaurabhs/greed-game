@@ -13,8 +13,8 @@ class Game
             @players.push(player)
         end
         
-        @players.each { |p| puts p.id } 
-        puts @players.size
+        # @players.each { |p| puts p.id } 
+        # puts @players.size
     end
 
     def start_game
@@ -24,13 +24,21 @@ class Game
     def play
       
         last_round = false
+        turn =1
+        current_turn_score=0
+
         while true do
-            #roll the dice for next player
-            puts "rolling the dice for player #{@current_player} with #{@num_dice} dices"
-            current_turn_score=0
+            #show the next turn only when current player =1
+            if(@current_player==1)
+                puts "Turn #{turn}:"
+                puts "______"
+                turn +=1
+            end
+
             @dice_set.roll(@num_dice)
-            puts @dice_set.values
+            puts "Player #{@current_player} rolls: #{@dice_set.values.join(", ")}"
             current_turn_score +=  @dice_set.score(@dice_set.values)
+            puts "Score in this round: #{current_turn_score}"
 
             non_scoring_dice = @dice_set.non_scoring_dice
 
@@ -38,13 +46,14 @@ class Game
                 if non_scoring_dice > 0
                     #give the player an option to roll again
                     
-                        puts "do you want to continue? Press(y/n)"
+                        puts "Do you want to roll the non scoring #{non_scoring_dice} dice? (y/n)"
                         continue_rolling = gets.chomp
                         #if player continues, roll the dice again
                         if continue_rolling.downcase == "y"
-                            puts "rolling the dice for player #{@current_player} with #{non_scoring_dice} dices"
+                            
                             @dice_set.roll(non_scoring_dice)
-                            puts @dice_set.values
+                            "Player #{@current_player} rolls: #{@dice_set.values.join(", ")}"
+                            
                             current_roll_non_scoring_dice_count = @dice_set.non_scoring_dice
                             non_scoring_dice =  current_roll_non_scoring_dice_count == non_scoring_dice ? 5 : current_roll_non_scoring_dice_count
                             current_roll_score = @dice_set.score(@dice_set.values)
@@ -66,22 +75,25 @@ class Game
             end
 
             #move to the next player
-            puts "moving to the next player, current leaderboard"
-            @players.each { |p| puts p.score } 
+            
+             
             current_player = @players.find { |p| p.id == @current_player}
 
             if(current_player.score != 0 || current_turn_score>=300)
                 current_player.score+= current_turn_score
             end
-           
+            puts "Current Scoreboard"
+            @players.each { |p| puts p.score }
             @current_player = @current_player + 1 <= @players.size ? @current_player + 1 : 1
             @num_dice = 5
+            current_turn_score=0
+            
         end
     end
 
     def end_game
         @players.sort_by { |obj| obj.score}
-        puts "game is over, and the winner is #{@players[0].id} with score #{@players[0].score}"
+        puts "game is over, and the winner is player #{@players[0].id} with score #{@players[0].score}"
     end
 end
 
@@ -112,13 +124,7 @@ game.end_game
 
 
 
-# dice_set = DiceSet.new
-# dice_set.roll(5)
-# puts dice_set.values
 
-# player = Player.new(1,0)
-# puts player.id
-# puts player.score
 
 
 
