@@ -24,8 +24,16 @@ class Game
     def play
         #roll the dice for next player
         puts "rolling the dice for player #{@current_player}"
+        current_turn_score=0
         @dice_set.roll(@num_dice)
         puts @dice_set.values
+
+        @dice_set.non_scoring_dice
+
+        current_turn_score +=  @dice_set.score(@dice_set.values)
+
+        #check if the player wants to continue with non scoring dice
+        # non_scoring_dice_count = @dice_set.values.select { |d| d!=}
 
 
         #set the next player 
