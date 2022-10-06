@@ -68,7 +68,12 @@ class Game
             #move to the next player
             puts "moving to the next player, current leaderboard"
             @players.each { |p| puts p.score } 
-            @players.find { |p| p.id == @current_player}.score+= current_turn_score
+            current_player = @players.find { |p| p.id == @current_player}
+
+            if(current_player.score != 0 || current_turn_score>=300)
+                current_player.score+= current_turn_score
+            end
+           
             @current_player = @current_player + 1 <= @players.size ? @current_player + 1 : 1
             @num_dice = 5
         end
@@ -80,12 +85,23 @@ class Game
     end
 end
 
-print "Welcome to Greed Game, Enter number of players (e.g. 3):"
+print "Welcome to Greed Game!! Enter the number of players (e.g. 3):"
 begin
     num_players = Integer(gets.chomp)
 rescue
-    puts "please enter integer values greater than 1"
+    puts "please enter integer values between 2 and 10"
+    exit
 end
+
+if num_players<2 || num_players >10
+    begin
+        raise ArgumentError, "number of players should be between 2 and 10"
+    rescue ArgumentError => e
+        puts e.message
+        exit
+    end
+end
+
 dice_set = DiceSet.new
 game = Game.new(num_players, dice_set)
 game.play
