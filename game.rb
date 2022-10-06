@@ -22,8 +22,9 @@ class Game
     end
 
     def play
-        game_not_over = true
-        while game_not_over do
+      
+        last_round = false
+        while true do
             #roll the dice for next player
             puts "rolling the dice for player #{@current_player} with #{@num_dice} dices"
             current_turn_score=0
@@ -53,29 +54,29 @@ class Game
                 end
             break if continue_rolling.downcase == "n" || non_scoring_dice==0 
             end
+
+            #if it's last round and last player has 
+            if last_round && @current_player == @players.size
+                break
+            end
+
+            #check for the last round 
+            if @current_player == @players.size && @players.find { |p| p.score >=500 } 
+                last_round = true
+            end
+
             #move to the next player
             puts "moving to the next player, current leaderboard"
             @players.each { |p| puts p.score } 
             @players.find { |p| p.id == @current_player}.score+= current_turn_score
             @current_player = @current_player + 1 <= @players.size ? @current_player + 1 : 1
             @num_dice = 5
-            
         end
-        
-
-        #check if the player wants to continue with non scoring dice
-        # non_scoring_dice_count = @dice_set.values.select { |d| d!=}
-
-
-        #set the next player 
-        
-        
-
     end
 
     def end_game
         @players.sort_by { |obj| obj.score}
-        puts "game is over, and the winner is #{@players[0]}"
+        puts "game is over, and the winner is #{@players[0].id} with score #{@players[0].score}"
     end
 end
 
@@ -88,6 +89,7 @@ end
 dice_set = DiceSet.new
 game = Game.new(num_players, dice_set)
 game.play
+game.end_game
 
 
 
