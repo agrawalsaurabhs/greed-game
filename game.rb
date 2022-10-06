@@ -44,7 +44,8 @@ class Game
                             puts "rolling the dice for player #{@current_player} with #{non_scoring_dice} dices"
                             @dice_set.roll(non_scoring_dice)
                             puts @dice_set.values
-                            non_scoring_dice =  @dice_set.non_scoring_dice == non_scoring_dice ? 5 : @dice_set.non_scoring_dice
+                            current_roll_non_scoring_dice_count = @dice_set.non_scoring_dice
+                            non_scoring_dice =  current_roll_non_scoring_dice_count == non_scoring_dice ? 5 : current_roll_non_scoring_dice_count
                             current_roll_score = @dice_set.score(@dice_set.values)
                             current_turn_score = current_roll_score ==0 ? 0 : current_turn_score +=  current_roll_score
                             continue_rolling = "n" if current_roll_score ==0
@@ -53,7 +54,8 @@ class Game
             break if continue_rolling.downcase == "n" || non_scoring_dice==0 
             end
             #move to the next player
-            puts "moving to the next player"
+            puts "moving to the next player, current leaderboard"
+            @players.each { |p| puts p.score } 
             @players.find { |p| p.id == @current_player}.score+= current_turn_score
             @current_player = @current_player + 1 <= @players.size ? @current_player + 1 : 1
             @num_dice = 5
