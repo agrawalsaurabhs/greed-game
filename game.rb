@@ -56,7 +56,7 @@ class Game
             displpay_score(current_roll_score, current_turn_score,current_player.score)
             
            
-            non_scoring_dice = @dice_set.non_scoring_dice
+            non_scoring_dice = @dice_set.non_scoring_dice(@dice_set.values)
 
             loop do
                 if non_scoring_dice > 0
@@ -69,7 +69,7 @@ class Game
                         displpay_score(current_roll_score, current_turn_score,current_player.score)
                         
                         #calculate non scoring dice count again, break if last roll score is 0
-                        current_roll_non_scoring_dice_count = @dice_set.non_scoring_dice
+                        current_roll_non_scoring_dice_count = @dice_set.non_scoring_dice(@dice_set.values)
                         non_scoring_dice =  current_roll_non_scoring_dice_count == non_scoring_dice ? NUMBER_OF_DICE : current_roll_non_scoring_dice_count
                         continue_rolling = "n" if current_roll_score ==0
                     end

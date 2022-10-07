@@ -1,27 +1,25 @@
 class DiceSet
     attr_reader :values
-    private 
-    attr_reader :numbers_count
 
-    
-    private def build_count_hash
-        @numbers_count = Hash.new(0)
-        @values.each { |n| 
-            @numbers_count[n]+=1 
+    private def build_count_hash(dice)
+        numbers_count = Hash.new(0)
+        dice.each { |n| 
+            numbers_count[n]+=1 
         }
+        return numbers_count
     end
 
     public def roll(num_dice)
       result = []
       num_dice.times { result << rand(1..6)}
       @values = result
-      build_count_hash
 
     end
 
-    public def non_scoring_dice
+    public def non_scoring_dice(dice)
         count =0
-        @numbers_count.each { |k,v|
+        numbers_count = build_count_hash(dice)
+        numbers_count.each { |k,v|
             if(v>=3) 
                 v= v-3
             end
@@ -33,6 +31,8 @@ class DiceSet
 
     public def score(dice)
         score = 0
+        return score if dice.size ==0
+        numbers_count = build_count_hash(dice)
         numbers_count.each { |k,v|
             if(v>=3) 
                 v= v-3
