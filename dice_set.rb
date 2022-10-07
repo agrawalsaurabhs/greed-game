@@ -28,7 +28,7 @@ class DiceSet
             end
             count += v if (k == 2 || k == 3 || k==4 || k==6) && v>0
         }
-        # puts "count of non scoring dice #{count}"
+        # puts "count of non scoring dice #{count}"     
         return count
     end
 
