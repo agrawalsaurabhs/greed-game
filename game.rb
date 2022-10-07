@@ -4,7 +4,7 @@ require_relative "player"
 class Game
     NUMBER_OF_DICE = 5
 	ELIGIBILITY_SCORE  = 300
-	MIN_WINNING_SCORE = 3000
+	MIN_WINNING_SCORE = 200
 
     def initialize(num_players, dice_set)
         @players = []
@@ -17,9 +17,10 @@ class Game
     end
 
     private
-    def show_current_turn_message(current_player)
+    def show_current_turn_message(current_player, last_round)
         if(current_player==1)
             puts "Turn #{@turn}:"
+            puts "last round" if last_round
             puts "______"
             @turn +=1
         end
@@ -61,7 +62,7 @@ class Game
 
         while true do
             
-            show_current_turn_message(current_player)
+            show_current_turn_message(current_player, last_round)
             current_player_obj = get_current_player(current_player)
             current_roll_score = roll_dice_for_player(NUMBER_OF_DICE,current_player_obj)
             current_turn_score +=  current_roll_score
@@ -89,7 +90,7 @@ class Game
             break if continue_rolling == "n" || non_scoring_dice==0 
             end
 
-            if(current_player_obj.score != 0 || current_turn_score>=300)
+            if(current_player_obj.score != 0 || current_turn_score>=ELIGIBILITY_SCORE)
                 current_player_obj.score+= current_turn_score
             end
 
@@ -99,7 +100,7 @@ class Game
             end
 
             #check for the last round 
-            if current_player == @players.size && @players.find { |p| p.score >=500 } 
+            if current_player == @players.size && @players.find { |p| p.score >=MIN_WINNING_SCORE } 
                 last_round = true
             end
 
@@ -111,29 +112,10 @@ class Game
     end
 
     def end_game
-        @players.sort_by { |obj| obj.score}
-        puts "game is over, and the winner is player #{@players[0].id} with score #{@players[0].score}"
+        #todo: what if 2 players scores same, we need to declare multiple winners
+        size = @players.size
+        @players.sort_by! { |obj| obj.score}
+        puts "game is over, and the winner is player #{@players[size-1].id} with score #{@players[size-1].score}"
     end
 end
 
-print "Welcome to Greed Game!! Enter the number of players (e.g. 3):"
-begin
-    num_players = Integer(gets.chomp)
-rescue
-    puts "please enter integer values between 2 and 10"
-    exit
-end
-
-if num_players<2 || num_players >10
-    begin
-        raise ArgumentError, "number of players should be between 2 and 10"
-    rescue ArgumentError => e
-        puts e.message
-        exit
-    end
-end
-
-dice_set = DiceSet.new
-game = Game.new(num_players, dice_set)
-game.play_game
-game.end_game
