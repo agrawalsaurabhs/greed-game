@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # require 'spec_helper'
 # require 'stringio'
 # require_relative '../program'
@@ -16,7 +17,6 @@
 #     expect { response }.to raise_error(Exception)
 #   end
 # end
-
 
 # # describe 'program' do
 # #     it 'should run' do
