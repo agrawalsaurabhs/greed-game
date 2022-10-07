@@ -12,7 +12,7 @@ class Game
         @dice_set = dice_set
         for i in 1..num_players
             player = Player.new(i)
-            @players.push(player)
+            @players.unshift(player)
         end
     end
 
@@ -24,10 +24,6 @@ class Game
             puts "______"
             @turn +=1
         end
-    end
-
-    private def get_current_player(player_number)
-        return @players.find { |p| p.id == player_number}
     end
 
     private def displpay_score(current_roll_score, current_turn_score,total_score)
@@ -48,18 +44,16 @@ class Game
 
     public
     def play_game
-      
         last_round = false
         current_turn_score=0
-        current_player=1
 
         while true do
+            current_player = @players.pop
+            show_current_turn_message(current_player.id, last_round)
             
-            show_current_turn_message(current_player, last_round)
-            current_player_obj = get_current_player(current_player)
-            current_roll_score = current_player_obj.roll_dice(NUMBER_OF_DICE,@dice_set)
+            current_roll_score = current_player.roll_dice(NUMBER_OF_DICE,@dice_set)
             current_turn_score +=  current_roll_score
-            displpay_score(current_roll_score, current_turn_score,current_player_obj.score)
+            displpay_score(current_roll_score, current_turn_score,current_player.score)
             
            
             non_scoring_dice = @dice_set.non_scoring_dice
@@ -70,9 +64,9 @@ class Game
                     continue_rolling = gets.chomp
                     handle_invalid_input(continue_rolling)
                     if continue_rolling == "y"
-                        current_roll_score = current_player_obj.roll_dice(NUMBER_OF_DICE,@dice_set)
+                        current_roll_score = current_player.roll_dice(non_scoring_dice,@dice_set)
                         current_turn_score = current_roll_score == 0 ? 0 : current_turn_score +=  current_roll_score
-                        displpay_score(current_roll_score, current_turn_score,current_player_obj.score)
+                        displpay_score(current_roll_score, current_turn_score,current_player.score)
                         
                         #calculate non scoring dice count again, break if last roll score is 0
                         current_roll_non_scoring_dice_count = @dice_set.non_scoring_dice
@@ -83,22 +77,23 @@ class Game
             break if continue_rolling == "n" || non_scoring_dice==0 
             end
 
-            if(current_player_obj.score != 0 || current_turn_score>=ELIGIBILITY_SCORE)
-                current_player_obj.score+= current_turn_score
+            if(current_player.score != 0 || current_turn_score>=ELIGIBILITY_SCORE)
+                current_player.score+= current_turn_score
             end
 
+            #add current players into players array once the turn is over
+            @players.unshift(current_player)
+
             #if it's last round and current player is last player then break 
-            if last_round && current_player == @players.size
+            if last_round && current_player.id == @players.size
                 break
             end
 
             #check for the last round 
-            if current_player == @players.size && @players.find { |p| p.score >=MIN_WINNING_SCORE } 
+            if current_player.id == @players.size && @players.find { |p| p.score >=MIN_WINNING_SCORE } 
                 last_round = true
             end
 
-            current_player = current_player + 1
-            current_player = 1 if current_player> @players.size
             current_turn_score=0
             puts
         end
