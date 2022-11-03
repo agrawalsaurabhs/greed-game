@@ -8,6 +8,9 @@ class Game
   ELIGIBILITY_SCORE = 300
   MIN_WINNING_SCORE = 3000
 
+  attr_reader :players
+  attr_reader :turn
+
   def initialize(num_players, dice_set)
     @players = []
     @turn = 1
